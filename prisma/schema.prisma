@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modèle pour les cartes carburant
+model CarteCarburant {
+  id                String   @id @default(cuid())
+  nom               String
+  fournisseur       String
+  logo              String
+  description       String
+  avantages         String[]
+  inconvenients     String[]
+  prixCarburant     String
+  fraisGestion      String
+  fraisAnnuels      String?
+  reseauStations    Int
+  paysCouverts      String[]
+  servicesAdditionnels String[]
+  noteGlobale       Float
+  avis              Avis[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Modèle pour les avis utilisateurs
+model Avis {
+  id               String        @id @default(cuid())
+  carteCarburantId String
+  carteCarburant   CarteCarburant @relation(fields: [carteCarburantId], references: [id])
+  nom              String
+  entreprise       String?
+  note             Float
+  commentaire      String
+  dateUtilisation  String?
+  createdAt        DateTime      @default(now())
+}
+
+// Modèle pour les soumissions du formulaire de contact
+model ContactSubmission {
+  id         String   @id @default(cuid())
+  nom        String
+  email      String
+  entreprise String?
+  telephone  String?
+  message    String
+  traite     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Modèle pour les soumissions du comparateur
+model ComparateurSubmission {
+  id                   String   @id @default(cuid())
+  typeEntreprise       String
+  nombreVehicules      String
+  consommationMensuelle String
+  paysUtilisation      String
+  typeCarburant        String
+  avantages            String[]
+  email                String?
+  createdAt            DateTime @default(now())
+}
+
+// Modèle pour les utilisateurs
+model User {
+  id            String    @id @default(cuid())
+  nom           String
+  email         String    @unique
+  password      String
+  entreprise    String?
+  telephone     String?
+  role          String    @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Modèle pour les articles de blog
+model Article {
+  id          String   @id @default(cuid())
+  titre       String
+  slug        String   @unique
+  contenu     String
+  image       String?
+  categories  String[]
+  tags        String[]
+  auteur      String
+  publie      Boolean  @default(false)
+  datePublication DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
